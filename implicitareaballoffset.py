@@ -212,8 +212,14 @@ class ImplicitAreaBallOffset:
         return False
     
     def DistP(self, pz, p):    # pz=PointZone
-        dpz = DistPZ(p, pz.r)  # temporarily convert to a different implementation of pointzone with some functions on it (could make the functions more global)
+        assert False
+
+    def DistPN(self, pz, n):    # pz=PointZone
+        p = n.p
+        return self.DistP(pz, p)
         
+    def DistP(self, pz, p):    # pz=PointZone
+        dpz = DistPZ(p, pz.r)  # temporarily convert to a different implementation of pointzone with some functions on it (could make the functions more global)
         for ix, iy in self.tboxing.CloseBoxeGenerator(p.x, p.x, p.y, p.y, pz.r):
             tbox = self.tboxing.boxes[ix][iy]
             for i in self.tboxing.SlicePointisZ(tbox.pointis, p.z-pz.r, p.z+pz.r):
@@ -241,7 +247,9 @@ class ImplicitAreaBallOffset:
         pz.v = dpz.v
         
 
-    def Cutpos(self, p, vp, cp, r):  # point, vector, cp=known close point to narrow down the cutoff search
+    def CutposN(self, nodefrom, nodeto, cp, r):  # point, vector, cp=known close point to narrow down the cutoff search
+        p = nodefrom.p
+        vp = nodeto.p - nodefrom.p
         dlpz = DistLamPZ(p, vp, r)  
         if cp is not None:
             dlpz.DistLamPpointPZ(cp)

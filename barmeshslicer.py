@@ -30,7 +30,7 @@ def getcrosscolours(bar, node, Dcellmark):
 def GetCellMarkBar(bar, cizone):  # derived from BarMeshCell.GetCellMark
     node = bar.GetNodeFore(bar.nodeback.pointzone.izone == cizone)
     assert node == bar.GetNodeFore(bar.nodeback.pointzone.izone == cizone)
-#    assert bar.GetForeRightBL(bar.nodeback == node) != None   # not RefersToOuterCell
+    assert bar.GetForeRightBL(bar.nodeback == node) != None   # not RefersToOuterCell
     return bar.GetCellMarkRightL(node == bar.nodeback)
     
 def IsCutBar(bar, cizone):
@@ -260,7 +260,7 @@ class BarMeshSlicer:
         for node in nodes:  # should be executed in parallel as a batch
             self.pzcalls += 1
             pz = node.pointzone = barmesh.PointZone(0, self.rd2, None)
-            self.tgf.DistP(pz, node.p)
+            self.tgf.DistPN(pz, node)
             if pz.r > self.rd:
                 pz.izone = barmesh.PZ_BEYOND_R
             else:
@@ -277,20 +277,20 @@ class BarMeshSlicer:
             assert IsCutBar(bar, barmesh.PZ_BEYOND_R)
             if bar.nodefore.pointzone.izone == barmesh.PZ_BEYOND_R:
                 assert bar.nodeback.pointzone.v is not None
-                lam = 1 - self.tgf.Cutpos(bar.nodefore.p, bar.nodeback.p - bar.nodefore.p, bar.nodeback.p + bar.nodeback.pointzone.v, self.rd)
+                lam = 1 - self.tgf.CutposN(bar.nodefore, bar.nodeback, None, self.rd)
             else:
                 assert bar.nodefore.pointzone.v is not None
-                lam = self.tgf.Cutpos(bar.nodeback.p, bar.nodefore.p - bar.nodeback.p, bar.nodefore.p + bar.nodefore.pointzone.v, self.rd)
+                lam = self.tgf.CutposN(bar.nodeback, bar.nodefore, None, self.rd)
             assert -0.001 <= lam <= 1.001, lam
             lambars.append((lam, bar))
         self.cbtime += time.process_time() - ctime1
         
         ctime2 = time.process_time()
         for lam, bar in lambars:
-            if 0 < lam < 1:
+            if 0.0 < lam < 1.0:
                 bar.nodemid = bar.nodeback.newnodetowardsothernode(bar.nodefore, lam, -1)
                 bar.nodemid.pointzone = barmesh.PointZone(0, self.rd2, None)
-                self.tgf.DistP(bar.nodemid.pointzone, bar.nodemid.p)
+                self.tgf.DistPN(bar.nodemid.pointzone, bar.nodemid)
             
             # cases where we have gone off the end, so push back to one of the ends
             elif lam < 0.5:

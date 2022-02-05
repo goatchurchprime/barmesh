@@ -256,7 +256,12 @@ class ImplicitAreaCylOffset:
         self.zlo = zlo
         self.zhi = zhi
     
-    def DistP(self, pz, p, Bnoedges = False):
+
+    def DistPN(self, pz, n, Bnoedges = False):
+        p = n.p
+        return self.DistP(pz, n, Bnoedges)
+        
+    def DistP(self, pz, n, Bnoedges = False):
         dpz = DistPZC(p, pz.r, self.zlo, self.zhi)
         
         for ix, iy in self.tboxing.CloseBoxeGenerator(p.x, p.x, p.y, p.y, pz.r):
@@ -286,7 +291,9 @@ class ImplicitAreaCylOffset:
         pz.Dpp = dpz.Dpp
         
 
-    def Cutpos(self, p, vp, cp, r):  # point, vector, cp=known close point to narrow down the cutoff search
+    def CutposN(self, nodefrom, nodeto, cp, r):  # point, vector, cp=known close point to narrow down the cutoff search
+        p = nodefrom.p
+        vp = nodeto.p - nodefrom.p
         dlpz = DistLamPZC(p, vp, r, self.zlo, self.zhi)
         if cp is not None:
             dlpz.DistLamPpointPZ(cp)

@@ -127,8 +127,46 @@ class P3(namedtuple('P3', ['x', 'y', 'z'])):
     def ConvertCZ(p, z):  
         return P3(p.x, p.y, z)
 
+class I1(namedtuple('I1', ['lo', 'hi'])):
+    __slots__ = ()
+    def __new__(self, lo, hi):
+        return super(I1, self).__new__(self, float(lo), float(hi))
+    def __repr__(self):
+        return "I1(%s, %s)" % (self.lo, self.hi)
+    def DIsValid(self):
+        assert self.lo <= self.hi
+        return self.lo <= self.hi
+    def Leng(self):
+        assert self.DIsValid()
+        return self.hi - self.lo
+    def Along(self, lam):
+        assert self.DIsValid()
+        return self.lo * (1 - lam) + self.hi * lam
+    def Contains(self, v):
+        assert self.DIsValid()
+        return self.lo <= v <= self.hi
+    def ContainsStrict(self, v):
+        assert self.DIsValid()
+        return self.lo < v < self.hi
 
-class I1:
+    def Inflate(self, v):
+        assert self.DIsValid()
+        res = I1(self.lo - v, self.hi + v)
+        assert res.DIsValid()
+        return res
+        
+    @staticmethod
+    def AbsorbList(vs):
+        llo = lhi = next(vs)
+        for v in vs:
+            if v < llo:
+                llo = v
+            elif v > lhi:
+                lhi = v
+        return I1(llo, lhi)
+
+
+class lI1:
     def __init__(self, lo, hi):
         self.lo = lo
         self.hi = hi
