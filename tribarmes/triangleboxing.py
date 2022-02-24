@@ -188,7 +188,7 @@ class TriangleBoxing:
     
 def MakeTriangleBoxing(tbarmesh, boxwidth=-1):
     if boxwidth == -1:
-        boxwidth = min(10.1, (tbarmesh.xhi - tbarmesh.xlo)*0.2, (tbarmesh.yhi - tbarmesh.ylo)*0.2)
+        boxwidth = min(10.1, max((tbarmesh.xhi - tbarmesh.xlo)*0.2, (tbarmesh.yhi - tbarmesh.ylo)*0.2))
     d = boxwidth + 0.5
     print("make triangle boxing at", boxwidth)
     tboxing = TriangleBoxing(tbarmesh, tbarmesh.xlo - d, tbarmesh.xhi + d, tbarmesh.ylo - d, tbarmesh.yhi + d, boxwidth)

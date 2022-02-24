@@ -211,12 +211,8 @@ class ImplicitAreaBallOffset:
     def Isb2dcontournormals(self):
         return False
     
-    def DistP(self, pz, p):    # pz=PointZone
-        assert False
-
     def DistPN(self, pz, n):    # pz=PointZone
-        p = n.p
-        return self.DistP(pz, p)
+        self.DistP(pz, n.p)
         
     def DistP(self, pz, p):    # pz=PointZone
         dpz = DistPZ(p, pz.r)  # temporarily convert to a different implementation of pointzone with some functions on it (could make the functions more global)
@@ -286,5 +282,6 @@ class ImplicitAreaBallOffset:
                 assert abs(pz.r - r) < 0.002, ("cutposbad", pz.r, dlpz.lam, dlpz.p, dlpz.vp)
             
         return dlpz.lam
+
 
 

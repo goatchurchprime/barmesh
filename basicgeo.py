@@ -218,7 +218,10 @@ class Partition1:
         self.vs = [ self.DAlong(i*1.0/nparts)  for i in range(0, nparts+1) ]
         assert (lo, hi) == (self.vs[0], self.vs[-1])
         assert len(self.vs) == nparts + 1
-        
+
+    def Contains(self, v):
+        return self.lo <= v <= self.hi
+
     def GetPart(self, v):
         assert self.lo <= v <= self.hi, ("Getpart", v, "not between", self.lo, self.hi)
         i = int(self.nparts * (v - self.lo) / (self.hi - self.lo))
